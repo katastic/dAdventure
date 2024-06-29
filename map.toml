@@ -1,0 +1,32 @@
+[general]
+name = "Test map"
+screens = 4
+
+[screen0]
+name = "Outer Space"
+width = 640
+height = 480
+nEntryZones = 2
+zoneCoords = []
+fileName = "screen01.png"
+
+[screen1]
+name = "Entryway"
+width = 640
+height = 480
+nEntryZones = 2
+fileName = "screen02.png"
+
+[screen2]
+name = "Hallway"
+width = 640
+height = 480
+nEntryZones = 2
+fileName = "screen02.png"
+
+[screen3]
+name = "Logistics"
+width = 640
+height = 480
+nEntryZones = 2
+fileName = "screen03.png"

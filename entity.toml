@@ -1,0 +1,8 @@
+[general]
+numberEntities = 2
+
+[entity0]
+name = "dude"
+
+[entity1]
+name = "dog"
