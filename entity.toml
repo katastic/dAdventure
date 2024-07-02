@@ -3,6 +3,12 @@ numberEntities = 2
 
 [entity0]
 name = "dude"
+pos = [2, 3]
+screen = 0
+health = 100.0
 
 [entity1]
 name = "dog"
+pos = [300, 3]
+screen = 0
+health = 100.0

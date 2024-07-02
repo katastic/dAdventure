@@ -8,5 +8,6 @@
 	},
 	"description": "A minimal D application.",
 	"license": "proprietary",
-	"name": "dadventure"
+	"name": "dadventure",
+	"dfmt_brace_style": "otbs"
 }

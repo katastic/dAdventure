@@ -2,12 +2,6 @@
     jot downs for adventureGame
     =============================================================================
 
-	- keeping two [objectType] + [objectInstance] for every type does have one benefit.
-	A clear decoupling between runtime and type data. (Unless we want to support run-time modification of types
-	such as stat values. But it's clear when those have to be moved to *instance]
-
-	- should items be component based?
-
     - one issue is, customization of components like we mentioned for audio. we have singleSprite graphics, and animatedgraphics.
     but then how do we pick the specific animations for one?        
         
@@ -17,6 +11,7 @@
 
         we probably want components decoupled from their datasets, so we can just use a TOML file
          and setup new objects by specifying their component, and datasets.
+
 
     - at some level, the AI and physics are going to be coupled. A floating ghost guy and a dog running on the ground
     can not only move in different areas, they desire to move differently. Like, if you give a dog the ability to fly
@@ -49,6 +44,16 @@
     - formatting. trying to get used to dfmt's default mode and D style guidelines
     for simplcity sake. 
 
+    - dfmt does not support one-liner comments off because it's dumb.
+        We can add our own one-liner support and just prune those results.
+        https://github.com/dlang-community/dfmt?tab=readme-ov-file#disabling-formatting
+
+        // dfmt off
+        // dfmt on
+        // dfmt oneoff <---
+
+        but this won't affect Visual Code because of bullshit.
+
     - fuzzyDImporter
         - set number of imports (std.file : read, use, thing) before just include 
             the whole module.
@@ -67,28 +72,28 @@ import std.stdio;
 import std.exception;
 import std.file : read;
 import std.string;
-import std.algorithm.comparison : min, max;
 
-//void nonOptionalOverride() => assert(false, "Base class method wasn't overridden."); // or just leave it virtual
-void noop() => cast(void) 0; // FIX ME YOU SILLY MAN
-bool noopDraw() => 0; // FIX ME YOU SILLY MAN
-//void todo() {static if(__LINE__ != __LINE__)pragma(msg, "using todo at ", __LINE__); cast(void) 0;} this also flags this line.
-int clampLow(int value, int _min) => max(value, _min);
-int clampHigh(int value, int _max) => min(value, _max);
-int clampBoth(int value, int _min, int _max) => max(min(value, _max), _min); // TODO CONFIRM THIS
+struct pair {
+	float x, y;
+}
 
-//dfmt off
-struct pair { float x, y; }
-struct Viewport { float x, y, w, h, ox, oy; }
-struct minMaxValue { float min, value, max;}
-struct rect { float x,y,w,h;}
-struct color { float r, g, b, a;}
-struct bitmap {
+struct Viewport {
+	float x, y, w, h, ox, oy;
+}
+
+struct color { // dfmt oneoff
+	float r, g, b, a;
+}
+
+struct bitmap { // dfmt oneoff
 	uint w, h;
-	color get(uint _i, uint _j) => color();		
-	} // ALLEGRO_BITMAP
-struct ALLEGRO_FILE {} // https://liballeg.org/a5docs/trunk/file.html#allegro_file
-//dfmt on
+	color get(uint _i, uint _j) {
+		return color();
+	}
+} // ALLEGRO_BITMAP
+
+struct ALLEGRO_FILE {
+} // https://liballeg.org/a5docs/trunk/file.html#allegro_file
 
 struct AllegroFileBuffer {
 	ALLEGRO_FILE* f;
@@ -98,7 +103,7 @@ struct AllegroFileBuffer {
 		load(filepath);
 	}
 
-	void load(string filepath) { // should load() be apart of the constructor?
+	final void load(string filepath) { // should load() be apart of the constructor?
 		import std.file : read;
 		import std.string : toStringz;
 
@@ -158,7 +163,9 @@ struct bitsmap { // too close to bitmap? better name?
 		data[_i + _j * w] = value;
 	}
 
-	bool get(uint _i, uint _j) => data[_i + _j * w];
+	bool get(uint _i, uint _j) {
+		return data[_i + _j * w];
+	}
 }
 
 class PixelMap {
@@ -208,13 +215,15 @@ interface Component { // certain ones don't have an ondraw or ontick. Does that 
 
 class PhysicsCom : Component {
 	pair pos;
-	pair vel;
-	uint screenIndex; /// Which screen are we on?
 	this() {
 	}
 
-	void onTick() => noop;
-	bool onDraw(Viewport v) => noopDraw;
+	void onTick() {
+	}
+
+	bool onDraw(Viewport v) {
+		return 0;
+	}
 }
 
 class GraphicsCom : Component {
@@ -226,13 +235,16 @@ class GraphicsCom : Component {
 		phy = _phy;
 	}
 
-	void onTick() => noop;
-	bool onDraw(Viewport v) => noopDraw;
+	void onTick() {
+	}
+
+	bool onDraw(Viewport v) {
+		return 0;
+	}
 
 	int currentFrame;
 	int nFrames;
 	int nDirections;
-	DIR dir;
 
 	void frameNext() {
 		currentFrame++;
@@ -242,15 +254,11 @@ class GraphicsCom : Component {
 
 	void setDirection(DIR d) {
 		assert(d < nDirections);
-		dir = d;
 	}
 }
 
 void alDrawBitmap(bitmap b, pair pos, Viewport v) {
 	// do stuff
-}
-
-void alDrawText(string text, pair pos, Viewport v) {
 }
 
 class SpriteGraphicsCom : GraphicsCom {
@@ -276,28 +284,36 @@ class AnimatedGraphicsCom : GraphicsCom {
 }
 
 class AudioCom : Component {
-	void onTick() => noop;
-	bool onDraw(Viewport v) => noopDraw;
+	void onTick() {
+	}
+
+	bool onDraw(Viewport v) {
+		return 0;
+	}
 }
 
 class NetworkCom : Component {
-	void onTick() => noop;
-	bool onDraw(Viewport v) => noopDraw;
+	void onTick() {
+	}
+
+	bool onDraw(Viewport v) {
+		return 0;
+	}
 }
 
 class AICom : Component {
-	void onTick() => noop;
-	bool onDraw(Viewport v) => noopDraw;
-}
+	void onTick() {
+	}
 
-class BaseObject { // common functionality between units (players) and items
-	// but wait, what about the fact we're using COMPONENTS?
+	bool onDraw(Viewport v) {
+		return 0;
+	}
 }
 
 // these are one-off components, on the otherhand, they are independant for task-based composition
 // ideally they'd be batches of units? Meh, it'll be fine.
 // only particle engine would even remotely hit performance limitations.
-class Unit : BaseObject {
+class Unit {
 	AICom ai;
 	PhysicsCom physics;
 	AudioCom audio;
@@ -357,243 +373,71 @@ class PlayerDude : Unit {
 	// don't have to override onTick or onDraw. Components are called the same. Customize the components.
 }
 
-class InventoryHotbarDialog { /// Visual and mouse elements for hotbar
-	rect dim;
-	float cellHeight = 32;
-	float cellWidth = 32;
-	float spacingWidth = 8;
-	InventoryHotbar hotbar;
+void parseMapConfig(string filepath = "map.toml") {
+	auto data = parseTOML(cast(string) read(filepath));
+	writefln("file [%s]=[%s]", filepath, data);
+	string name = data["general"]["name"].str;
+	long numberScreens = data["general"]["screens"].integer;
 
-	void onTick() => noop;
-	bool onDraw(Viewport v) {
-		foreach (i; hotbar.items) {
-			i.onDraw(v);
+	struct screen {
+		int w, h;
+		int nEntryZones; // warp zones to other screens
+	}
+
+	for (int i = 0; i < numberScreens; i++) {
+		auto d = data["screen%u".format(i)];
+		writeln("\t", d);
+		screen s = screen(cast(int) d["width"].integer, cast(int) d["height"].integer, cast(int) d["nEntryZones"]
+				.integer);
+		writeln(s);
+	}
+
+	writefln("%s %s", name, numberScreens);
+}
+
+void parseEntityConfig(string filepath = "entity.toml") {
+	auto data = parseTOML(cast(string) read(filepath));
+	writefln("file [%s]=[%s]", filepath, data);
+
+	long numberEntities = data["general"]["numberEntities"].integer;
+
+	struct entity {
+		string name;
+	}
+
+	for (int i = 0; i < numberEntities; i++) {
+		auto d = data["entity%u".format(i)];
+		writeln("\t", d);
+		entity e = entity(d["name"].str);
+		writeln(e);
+	}
+
+	//writeln(data["objects"]);
+	//		pragma(msg, typeof(tomldata["map"]["layer1"]));
+	/+foreach (idx, o; tomldata["walker"]["layer1"].array) {
+		writeln("----", o);
+		for (int j = 0; j < 10; j++) {
+			data[idx + 16][j + 16] = cast(int) o[j].integer;
 		}
-		return 0;
-	}
-}
-
-class InventoryHotbar {
-	ItemInstance[] items;
-	int nHotbarCells;
-	int cellIdx;
-
-	void actionSelection() { /// Press activate on the active hotbar item
-		items[cellIdx].actionActivate();
-	}
-
-	void actionSelection(int specificIndex) { /// Press activate on a hotbar item
-		enforce(specificIndex >= 0 && specificIndex < nHotbarCells);
-		items[specificIndex].actionActivate();
-	}
-
-	void actionLeft() {
-		cellIdx = clampLow(cellIdx - 1, 0);
-	}
-
-	void actionRight() {
-		cellIdx = clampHigh(cellIdx + 1, nHotbarCells - 1);
-	}
-}
-
-class ItemInstance { // use a BaseObject?
-	Item itemType;
-
-	//bool isHidden; // needed? If inside inventory but not inventory isn't open?
-	bool isInside;
-	pair pos;
-	pair vel;
-	uint screenIndex; // which screen are we on?
-	// runtime variables. How do we support them?
-	// toss them into an AA?
-
-	bool onDraw(Viewport v) => isInside ? drawInside(v) : drawOutside(v);
-	bool drawInside(Viewport v) => noopDraw; /// for hotbar, inventory, etc.
-	bool drawOutside(Viewport v) => noopDraw; /// for active canvas gameplay
-
-	void actionActivate() {
-		enforce(itemType !is null);
-		itemType.actionActivate();
-	}
-}
-
-// type vs instance?
-class Item {
-	string name;
-	string description;
-	Item[] decaysTo; /// Item(s) this decays to (if we use this mechanic. Whether through damage, time, uses, or recycling somehow)
-	Item[] recyclesTo; /// Item(s) this recycles to
-
-	void actionActivate() => noop;
-	void actionActivate2() => noop;
-	void actionActivate3() => noop;
-	void actionActivate4() => noop;
-	void onTick() => noop;
-	bool onDraw(Viewport v) => noopDraw;
-}
-
-class Spacesuit : Item {
-	this() {
-		name = "Spacesuit";
-		description = "";
-		recyclesTo = [];
-		decaysTo = [];
-	}
-}
-
-class OxygenTank : Item {
-	this() {
-		name = "Oxygen Tank";
-		description = "";
-		recyclesTo = []; // [Metal]. this is a TYPE. Do we have an instance of each one for pointing to, or do we use compile-time reflection?
-		decaysTo = [];
-	}
-}
-
-class Metal : Item {
-	this() {
-		name = "Metal";
-		description = "";
-	}
+	}+/
 }
 
 union MessagePayload {
-	char[32] strVal;
-	float floatVal;
-	int intVal;
+	float val;
 }
 
-class Message {
-	string channel; // fixed string max for performance?
-	MessagePayload payload;
+struct Messsage {
 }
 
-class MessageHandler { // internal use only
-	string[Message[]] buffer;
-
-	void send(T)(string channel, T val) => noop;
-
-	void onTick() {
-		foreach (b; buffer) {
-		}
-	}
-}
-
-class ProgressBar {
-	bitmap backgroundTex;
-	bitmap filledTex;
-	bitmap unfilledTex;
-	rect dim;
-	minMaxValue val = minMaxValue(0f, 1500f, 1500f);
-
-	void onTick() => noop;
-	bool onDraw(Viewport v) {
-		float fullWidth = dim.w;
-		float coefficent = (val.value / val.max);
-		float filledWidth = fullWidth * coefficent;
-		float unfilledWidth = fullWidth * (1f - coefficent);
-		// drawBitmap(backgroundTex,
-		// drawBitmap(filledTex,
-		// drawbitmap(unFilledTex,
-		// drawText("%.1s / %.1s", val.value, val, max);
-		return 0;
-	}
-}
-
-class DialogProgressBar {
-	string title = "The Only Warp In Colossus";
-	bitmap portrait;
-	ProgressBar bar;
-	rect dim;
-}
-
-struct Screen {
-	int w, h;
-	int nEntryZones; // warp zones to other screens
-}
-
-class MapHandler {
-	Screen[] screens;
-
-	void loadMapConfig(string filepath = "map.toml") {
-		auto data = parseTOML(cast(string) read(filepath));
-		writefln("file [%s]=[%s]", filepath, data);
-		string name = data["general"]["name"].str;
-		long numberScreens = data["general"]["screens"].integer;
-
-		for (int i = 0; i < numberScreens; i++) {
-			auto d = data["screen%u".format(i)];
-			writeln("\t", d);
-			Screen s = Screen(cast(int) d["width"].integer, cast(int) d["height"].integer, cast(int) d["nEntryZones"]
-					.integer);
-			writeln(s);
-		}
-		writefln("%s %s", name, numberScreens);
-	}
-
-	void onTick() => noop;
-	void onDraw(Viewport v) => noop;
-}
-
-class World {
-	MapHandler map;
-	Unit[] objects; // stored per screen, or here and list the screen?
-	Unit[] players; // short-list for players for enumerating just them
-	Item[] items; // items in world
-
-	this(){
-		loadEntityConfig();
-		map.loadMapConfig();
-		}
-
-	void warpToScreen(Unit thing, int newScreenIndex, pair newPosition) {
-		thing.physics.screenIndex = newScreenIndex;
-		thing.physics.pos = newPosition;
-	}
-
-	void warpToScreen(ItemInstance thing, int newScreenIndex, pair newPosition) { // is it possible to warp items? Perhaps for inventory systems, exhaust chutes, etc.
-		thing.screenIndex = newScreenIndex;
-		thing.pos = newPosition;
-	}
-
-	void onTick() {
-		foreach (o; objects)
-			o.onTick();
-		foreach (i; items)
-			i.onTick();
-	}
-
-	void onDraw(Viewport v) {
-		foreach (o; objects)
-			o.onDraw(v);
-		foreach (i; items)
-			i.onDraw(v);
-	}
-
-	final void loadEntityConfig(string filepath = "entity.toml") {
-		auto data = parseTOML(cast(string) read(filepath));
-		writefln("file [%s]=[%s]", filepath, data);
-
-		long numberEntities = data["general"]["numberEntities"].integer;
-
-		struct entity {
-			string name;
-		}
-
-		for (int i = 0; i < numberEntities; i++) {
-			auto d = data["entity%u".format(i)];
-			writeln("\t", d);
-			entity e = entity(d["name"].str);
-			writeln(e);
-		}
-	}
+class MessageHandler {
+	MessagePayload[][string] tt;
 }
 
 int main() {
 	PixelMap pm;
 	PixelMapCollider pmc = new PixelMapCollider(&pm);
 
-	World world;
-
+	parseMapConfig();
+	parseEntityConfig();
 	return 0;
 }

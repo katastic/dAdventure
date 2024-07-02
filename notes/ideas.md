@@ -1,0 +1,3 @@
+Spacesuit
+    Oxygen Tank
+        Metal
