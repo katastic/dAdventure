@@ -18,7 +18,7 @@
     it's still gonna try to jump and walk. We're not going to do some sort of abstract procedural AI that figures out
      how to move on its own. Still, it's mostly decoupled through clear interfaces so other variations can easily 
      use them. 3 different land AIs (1 charges, 1 jumps, 1 walks), still use the same walking ground path finding 
-     interface.
+     interface.sett
 
     - what does audio component do except call audio? Is there any benefit in customizing it?
         - do we want each audiocomponent to describe each enemy's sounds?
@@ -73,27 +73,18 @@ import std.exception;
 import std.file : read;
 import std.string;
 
-struct pair {
-	float x, y;
-}
-
-struct Viewport {
-	float x, y, w, h, ox, oy;
-}
-
-struct color { // dfmt oneoff
-	float r, g, b, a;
-}
-
-struct bitmap { // dfmt oneoff
+//dfmt off
+struct pair { float x, y; }
+struct Viewport { float x, y, w, h, ox, oy; }
+struct minMaxValue { float min, value, max;}
+struct rect { float x,y,w,h;}
+struct color { float r, g, b, a;}
+struct bitmap {
 	uint w, h;
-	color get(uint _i, uint _j) {
-		return color();
-	}
-} // ALLEGRO_BITMAP
-
-struct ALLEGRO_FILE {
-} // https://liballeg.org/a5docs/trunk/file.html#allegro_file
+	color get(uint _i, uint _j) => color();		
+	} // ALLEGRO_BITMAP
+struct ALLEGRO_FILE {} // https://liballeg.org/a5docs/trunk/file.html#allegro_file
+//dfmt on
 
 struct AllegroFileBuffer {
 	ALLEGRO_FILE* f;
@@ -103,7 +94,7 @@ struct AllegroFileBuffer {
 		load(filepath);
 	}
 
-	final void load(string filepath) { // should load() be apart of the constructor?
+	void load(string filepath) { // should load() be apart of the constructor?
 		import std.file : read;
 		import std.string : toStringz;
 
@@ -127,7 +118,6 @@ struct FileBuffer {
 
 	void load(string filepath) { // should load() be apart of the constructor?
 		import std.file : read;
-
 		data = cast(ubyte[]) read(filepath); // can fire exception
 	}
 
@@ -404,22 +394,74 @@ void parseEntityConfig(string filepath = "entity.toml") {
 		string name;
 		}
 
-	for(int i = 0; i < numberEntities; i++){
+		for(int i = 0; i < numberEntities; i++){
 		auto d = data["entity%u".format(i)];
 		writeln("\t", d);
 		entity e = entity(d["name"].str);
 		writeln(e);
 		}
-
-	//writeln(data["objects"]);
-	//		pragma(msg, typeof(tomldata["map"]["layer1"]));
-	/+foreach (idx, o; tomldata["walker"]["layer1"].array) {
-		writeln("----", o);
-		for (int j = 0; j < 10; j++) {
-			data[idx + 16][j + 16] = cast(int) o[j].integer;
-		}
-	}+/
 }
+
+
+
+class Item {
+	pair pos;
+	void onTick(){}
+	bool onDraw(Viewport v){return 0;}
+}
+
+class Spacesuit : Item {} 
+
+
+union MessagePayload {
+	char[32] strVal;
+	float floatVal;
+	int intVal;
+	}
+
+class Message {
+	string channel; // fixed string max for performance?
+	MessagePayload payload;
+	}
+	
+class MessageHandler { // internal use only
+	string[Message[]] buffer;
+
+	void send(T)(string channel, T val) {
+			}
+			
+	void onTick() {
+		foreach(b; buffer) {
+			 }
+		}
+	}
+
+class ProgressBar{
+	bitmap backgroundTex;
+	bitmap filledTex;
+	bitmap unfilledTex;
+	rect dim;
+	minMaxValue val = minMaxValue(0f, 1500f, 1500f);
+	void onTick(){}
+	bool onDraw(Viewport v){
+		float fullWidth = dim.w;
+		float coefficent = (val.value / val.max);
+		float filledWidth = fullWidth * coefficent;
+		float unfilledWidth = fullWidth * (1f-coefficent);
+		// drawBitmap(backgroundTex,
+		// drawBitmap(filledTex,
+		// drawbitmap(unFilledTex,
+		// drawText("%.1s / %.1s", val.value, val, max);
+		return 0;
+		}
+}
+
+class DialogProgressBar{
+	string title = "The Only Warp In Colossus";
+	bitmap portrait;
+	ProgressBar bar;
+	rect dim;
+	}
 
 int main() {
 	PixelMap pm;
