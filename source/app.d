@@ -2,6 +2,90 @@
     jot downs for adventureGame
     =============================================================================
 
+	- maybe there's mutliple "things"/resources that go into modifying enemies, and you 
+	can reduce or eliminate certain features by removing them from access by DaveX.
+		Remove his access to heat resistant chemicals/materials, and the monsters
+		will either have less or no heat protection.
+		
+			- not sure how we'll do the AI, but we may make it like a resource point-buy system
+			as if it were an RTS with many different resources. If DaveX wants to build fire 
+			resistant, and places a high [strategicValue] on that resource, he will prioritize
+			getting more of that, and, build more of those units.
+			
+			- NO IDEA how we can portrary evolving units. Will likely have to learn some 
+			genetic algorithm stuff... and also balancing it.
+				- imagine DaveX adding multiple arms. or legs. or more spine segments.
+					moving it around will be difficult, also they need to have 
+						discrete, clustered, GAME MECHANICS that actually make them 
+						unique to fight.
+				- this could really easily end up in the body horror category
+				
+				- DaveX using all the parts he can find. Even if they're just limbs.
+				
+				specific categories of units, that genetically engineer to adapt to their role based on interactions with the player.
+				
+				[scouts] - lightweight.
+					adapt into [speed], [power], [special] (camoflague, near invsiibilty, specail attacks)
+					
+				[light / disposable grunts]
+					low resource cost grunts. zombies.
+					
+				[medium / general]
+					adapt into [speed], [power], [special]
+				
+				[heavy / breacher]
+				
+				[others??]
+
+				Think about Impossible Creatures in terms of [ability] point-buy system.
+
+				
+			It would be more interesting if there's a [third team] competing. The way there's the Many and Shodan, and both fight you but would fight each other if they could. Probably technology / scope limitations but you know, I don't recall any situation where an enemy fights an enemy even though in lore/story Shodan, and The Many are separate from each other. But who are the other faction(s)
+			
+				- You, "good guys"
+				- DaveX + His Creations
+				- alien influence? rival human faction? Less believable? Although, a rival intruder would be a great reason for DaveX to snap. Whether they hacked him,
+				or the extreme situation broke his AI routines loose. We may need more backstory to come up with a plausisble human faction. Could even be a rival space [company] (capitalism or pirates) or rival space [country] (US vs Russia / China). It's also possible if DaveX creations are too [intelligent] maybe one (queen) can rebel and become independant mini-hive with independent resource gathering and evolution tree?
+				
+				Our ship doesn't have to be a huge Enterprise style naval vessel. It could be a smaller, medium size, research or cargo vessel.
+				
+				It would be also interesting if we have [two ships] or more flying together, and you can escape in either, or use one to grenade both into suicide ending.
+				
+				
+			MANY ENDINGS
+				- many endings. Emergent gameplay/replayability. Watch different ways to blow up the ship, or curtain their objective.
+				
+					- Blow it up. (No escape.)
+					- Blow it up and escape on escape pod or second ship.
+					- Blow up both ships.
+					- Stranded in space. Starve to death. Is DaveX defeated or in a form of stasis like The Thing? 
+						- Prevent power and/or freezers from functioning (either directory powered, or blow them up, or sabotage them so they only seem functional).
+							- sabotage:
+								- timed fuses. timed epxlosives. Take out the power or coolant system. Damage the structure.
+								- damage 
+	
+	
+				If DaveX cannot [win], he will try to [survive]
+	
+				DaveX survives by
+					-> storing his core somewhere (his full brain) -- massive victory
+					-> storing a virus somewhere (small amount) -- small victory
+					-> uploading his brain across space somewhere via antenna.
+
+				DaveX creations survive by:
+					-> evolving into some immortal space surviving creature?
+					-> storing his creations somewhere (massive # of enemies)
+						-> alive and fed
+						-> barely alive and lightly fed
+						-> frozen
+		
+					-> storing a single creation somewhere hoping to spread out again and infect like The Thing.
+						
+						
+		- support campaign ship, permutation (ala diablo) room based ship, as well as third-party mod ships for variations. Also mod based chunk packs for diablo / SoR mode.
+			- will need plausibilty tests to make sure you can do things like access each part, unlock each part, hack/etc each part, etc.
+			
+				
 	- keeping two [objectType] + [objectInstance] for every type does have one benefit.
 	A clear decoupling between runtime and type data. (Unless we want to support run-time modification of types
 	such as stat values. But it's clear when those have to be moved to *instance]
