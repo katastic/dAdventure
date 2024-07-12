@@ -11,6 +11,13 @@
 			as if it were an RTS with many different resources. If DaveX wants to build fire 
 			resistant, and places a high [strategicValue] on that resource, he will prioritize
 			getting more of that, and, build more of those units.
+
+				- metals, body parts/biomass (muscle vs bone?)
+					- upgrade tree like infected access to:
+						- food replicators (bio?)
+						- manufactoring (metals)
+						- 3d printing labs (plastics)
+			
 			
 			- NO IDEA how we can portrary evolving units. Will likely have to learn some 
 			genetic algorithm stuff... and also balancing it.
@@ -417,6 +424,9 @@ class BaseObject
 	// but wait, what about the fact we're using COMPONENTS?
 }
 
+
+//class //functionality
+
 // these are one-off components, on the otherhand, they are independant for task-based composition
 // ideally they'd be batches of units? Meh, it'll be fine.
 // only particle engine would even remotely hit performance limitations.
@@ -709,7 +719,9 @@ class World
 
 	this()
 	{
+		writeln("Loading world.");
 		loadEntityConfig();
+		map = new MapHandler();
 		map.loadMapConfig();
 	}
 
@@ -747,6 +759,8 @@ class World
 		writefln("file [%s]=[%s]", filepath, data);
 
 		long numberEntities = data["general"]["numberEntities"].integer;
+
+		writefln("Found %s entities.", numberEntities);
 
 		struct entity
 		{
@@ -896,7 +910,8 @@ int main()
 	PixelMap pm;
 	PixelMapCollider pmc = new PixelMapCollider(&pm);
 
-	World world;
+	World world = new World();
+	world.onTick();
 
 	return 0;
 }
