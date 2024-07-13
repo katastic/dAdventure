@@ -905,6 +905,65 @@ class GasCom
 {
 } // vacuum, etc
 
+
+
+struct sumNumber{
+	string name="Units";
+	float[] numbers;
+	
+	float getTotal(){ /// Return total of all sub units
+		float total;
+		foreach(n; numbers){total += n;}
+		return total;
+		}
+		
+	float getAverage(){
+		float sum;
+		float count = numbers.length;
+		foreach(n; numbers){sum += n;}
+		return sum / count;
+		}
+	}
+
+/// AI Resources and Management
+struct AIResources {
+	/// How much of X resource do we have?
+	float bodyScrap;
+	float metalScrap;
+	float techScrap;
+	
+	/// How often are we getting X resource? Used for predicting when we've run out.
+	float bodyScrapRate;
+	float metalScrapRate;
+	float techScrapRate;
+	
+	/// How often are we able to recover our bodies?
+	float bodyRecoveryPercentage;
+		float scoutRecoveryPercentage;
+		float mediumRecoveryPercentage;
+		float heavyRecoveryPercentage;
+		float specialRecoveryPercentage;
+	
+	float maxUnitsTotal;
+		float maxScouts;
+		float maxMedium;
+		float maxHeavy;
+		float maxSpecial;
+		
+	float maxPointBuyPerUnit; /// Current limit. Modify per tier? or gradual?
+	float maxPointBuyPerArmy; /// Current army limit.
+	
+	float techEvolutionTier; 
+	}
+	
+struct StatAbility {
+	string name; // needed for debug only? Shows in codex after discovery? Might be more mysterious if we don't directly document each ability.
+	float pointCost;
+	float bodyCost;
+	float metalCost;
+	float techCost;
+	}
+
 int main()
 {
 	PixelMap pm;
